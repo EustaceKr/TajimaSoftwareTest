@@ -1,0 +1,62 @@
+﻿@model Data.Context.Entities.Template
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Template</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="createForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DecorationMethod" class="control-label"></label>
+                <select asp-for="DecorationMethod" class="form-control" asp-items="ViewBag.DecorationMethodList"></select>
+                <span asp-validation-for="DecorationMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Select Designs (optional)</label>
+                <select id="designsSelect" class="form-control" multiple>
+                    @foreach (var design in ViewBag.AvailableDesigns)
+                    {
+                        <option value="@design.Id">@design.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="designsData" name="Designs" />
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('createForm').addEventListener('submit', function () {
+            var selectedDesigns = [];
+            var selectElement = document.getElementById('designsSelect');
+            for (var i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].selected) {
+                    selectedDesigns.push(selectElement.options[i].value);
+                }
+            }
+            document.getElementById('designsData').value = JSON.stringify(selectedDesigns);
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

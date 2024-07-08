@@ -1,0 +1,9 @@
+﻿@model ErrorViewModel
+
+<div class="alert alert-danger">
+    <h4 class="alert-heading">Error</h4>
+    <p>Status: @Model.StatusCode</p>
+    <p>@Model.ErrorMessage</p>
+    <hr>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Back to Home</a>
+</div>
