@@ -13,7 +13,6 @@ namespace Data.Context.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; } 
     }

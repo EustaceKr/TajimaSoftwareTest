@@ -37,17 +37,7 @@ namespace Data.Repositories
         
         public virtual void Update(T entity, params string[] propertiesToIgnore)
         {
-            var entry = _context.Entry(entity);
-            entry.State = EntityState.Modified;
-            if (!propertiesToIgnore.Any())
-                _context.Set<T>().Update(entity);
-            else
-            {
-                foreach (var property in propertiesToIgnore)
-                {
-                    entry.Property(property).IsModified = false;
-                }
-            }
+            _context.Set<T>().Update(entity);
         }
 
         public virtual async Task<bool> SaveChangesAsync()
