@@ -13,9 +13,7 @@ public static class DataMapping
             DecorationMethod = dto.DecorationMethod,
             Name = dto.Name,
             Width = dto.Width,
-            Height = dto.Height,
-            CreatedDate = null,
-            UpdatedDate = null
+            Height = dto.Height
         };
     }
     public static Template MapTemplate(TemplateDTO dto)
@@ -24,9 +22,7 @@ public static class DataMapping
             Id = dto.Id,
             DecorationMethod = dto.DecorationMethod,
             Name = dto.Name,
-            TemplateDesigns = dto.TemplateDesigns,
-            CreatedDate = null,
-            UpdatedDate = null
+            TemplateDesigns = dto.TemplateDesigns
         };
     }
     public static DesignDTO MapDesignDTO(Design design)
@@ -37,7 +33,8 @@ public static class DataMapping
             DecorationMethod = design.DecorationMethod,
             Name = design.Name,
             Width = design.Width,
-            Height = design.Height
+            Height = design.Height,
+            TemplateDesigns = design.TemplateDesigns
         };
     }
     public static TemplateDTO MapTemplateDTO(Template template)

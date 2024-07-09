@@ -60,8 +60,6 @@ namespace Web.Controllers
         }
 
         // POST: Designs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DecorationMethod,Name,Width,Height")] DesignDTO dto)
@@ -96,8 +94,6 @@ namespace Web.Controllers
         }
 
         // POST: Designs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DecorationMethod,Name,Width,Height")] DesignDTO dto)
@@ -148,6 +144,7 @@ namespace Web.Controllers
                 return RedirectToAction(nameof(Error), new { message = response.Error, status = response.Response });
         }
 
+        //GET: Error
         public IActionResult Error(string message, HttpStatusCode status)
         {
             var errorModel = new ErrorViewModel

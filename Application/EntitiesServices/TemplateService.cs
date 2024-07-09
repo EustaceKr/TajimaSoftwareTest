@@ -17,7 +17,7 @@ namespace Application.EntitiesServices
     public class TemplateService : BaseService<Template>, ITemplateService
     {
         IDesignService _designService;
-        public TemplateService(ITemplateRepository repository, ILogger<TemplateService> logger, IDesignService designService) : base(repository,logger)
+        public TemplateService(ITemplateRepository repository, ILogger<TemplateService> logger, IDesignService designService) : base(repository, logger)
         {
             _designService = designService;
         }
@@ -35,10 +35,10 @@ namespace Application.EntitiesServices
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -55,31 +55,39 @@ namespace Application.EntitiesServices
                 else
                     return new ServiceResponse<TemplateDTO>(HttpStatusCode.NotFound, null, null);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new ServiceResponse<TemplateDTO>(HttpStatusCode.InternalServerError, e.Message, null);
+                _logger.LogError(ex, ex.Message);
+                return new ServiceResponse<TemplateDTO>(HttpStatusCode.InternalServerError, ex.Message, null);
             }
             throw new NotImplementedException();
         }
 
         public async Task<BaseServiceResponse> Create(TemplateDTO dto, List<int> designIds)
         {
-            if (designIds.Count > 0)
+            try
             {
-                foreach (var designId in designIds)
+                if (designIds != null && designIds.Count > 0)
                 {
-                    var templateDesign = new TemplateDesign
+                    foreach (var designId in designIds)
                     {
-                        TemplateId = dto.Id,
-                        DesignId = designId
-                    };
-                    dto.TemplateDesigns.Add(templateDesign);
+                        var templateDesign = new TemplateDesign
+                        {
+                            TemplateId = dto.Id,
+                            DesignId = designId
+                        };
+                        dto.TemplateDesigns.Add(templateDesign);
+                    }
                 }
+                var template = DataMapping.MapTemplate(dto);
+                template.CreatedDate = DateTime.UtcNow;
+                return await base.Create(template);
             }
-            var template = DataMapping.MapTemplate(dto);
-            template.CreatedDate = DateTime.UtcNow;
-            return await base.Create(template);
+            catch(Exception ex)
+            {
+                _logger?.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
 
         public async Task<BaseServiceResponse> Update(int id, TemplateDTO dto, List<int> selectedDesignIds)
@@ -122,10 +130,10 @@ namespace Application.EntitiesServices
                     var entity = DataMapping.MapTemplate(existingTemplate);
                     entity.UpdatedDate = DateTime.UtcNow;
 
-                    var updateResponse = await base.Update(entity, ["CreatedDate"]);
+                    var updateResponse = await base.Update(entity);
                     if (updateResponse.Response == HttpStatusCode.OK)
                         return new BaseServiceResponse(HttpStatusCode.OK, null);
-                    else 
+                    else
                         return new BaseServiceResponse(response.Response, response.Error);
                 }
                 else
@@ -133,10 +141,10 @@ namespace Application.EntitiesServices
                     return new BaseServiceResponse(response.Response, response.Error);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

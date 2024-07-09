@@ -34,10 +34,10 @@ namespace Application.EntitiesServices
                     return new BaseServiceResponse(HttpStatusCode.InternalServerError, null);
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e,e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex,ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -57,10 +57,10 @@ namespace Application.EntitiesServices
                 else
                     return new BaseServiceResponse(HttpStatusCode.BadRequest, null);
             }
-            catch (Exception e) 
+            catch (Exception ex) 
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -75,10 +75,10 @@ namespace Application.EntitiesServices
                 else
                     return new BaseServiceResponse(HttpStatusCode.InternalServerError, saveResponse.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -89,28 +89,28 @@ namespace Application.EntitiesServices
                 var response = await _repository.FindAll().ToListAsync();
                 return new ServiceResponse<List<T>>(HttpStatusCode.OK, null, response);
             }
-            catch (Exception e) 
+            catch (Exception ex) 
             {
-                _logger.LogError(e, e.Message);
-                return new ServiceResponse<List<T>>(HttpStatusCode.InternalServerError, e.Message, null);
+                _logger.LogError(ex, ex.Message);
+                return new ServiceResponse<List<T>>(HttpStatusCode.InternalServerError, ex.Message, null);
             }
         }
 
-        public virtual async Task<BaseServiceResponse> Update(T entity, params string[] propertiesToIgnore)
+        public virtual async Task<BaseServiceResponse> Update(T entity)
         {
             try
             {
-                _repository.Update(entity, propertiesToIgnore);
+                _repository.Update(entity);
                 var saveResponse = await Complete();
                 if (saveResponse.Response == HttpStatusCode.OK)
                     return new BaseServiceResponse(HttpStatusCode.OK, null);
                 else
                     return new BaseServiceResponse(HttpStatusCode.InternalServerError, saveResponse.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError,e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError,ex.Message);
             }
         }
     }

@@ -35,7 +35,7 @@ namespace Data.Repositories
             return _context.Set<T>().Where(expression).AsNoTracking();
         }
         
-        public virtual void Update(T entity, params string[] propertiesToIgnore)
+        public virtual void Update(T entity)
         {
             _context.Set<T>().Update(entity);
         }

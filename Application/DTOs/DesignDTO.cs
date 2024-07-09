@@ -21,12 +21,12 @@ namespace Application.DTOs
         public string Name { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid height.")]
+        [Range(0.1, double.MaxValue, ErrorMessage = "Please enter a valid height.")]
         [Display(Name = "Width in mm")]
         public double Width { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid height.")]
+        [Range(0.1, double.MaxValue, ErrorMessage = "Please enter a valid height.")]
         [Display(Name = "Height in mm")]
         public double Height { get; set; }
 

@@ -8,7 +8,7 @@ namespace Data.Repositories.Interfaces
         IQueryable<T> FindAll();
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
         T Create(T item);
-        void Update(T item, params string[] propertiesToIgnore);
+        void Update(T item);
         void Delete(T item);
         Task<bool> SaveChangesAsync();
     }

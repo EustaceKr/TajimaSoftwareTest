@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Context
 {
+    //class needed for scafolding
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
         public ApplicationDbContext CreateDbContext(string[] args)

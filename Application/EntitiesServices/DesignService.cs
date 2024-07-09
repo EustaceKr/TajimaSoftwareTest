@@ -37,10 +37,10 @@ namespace Application.EntitiesServices
                 else
                     return new ServiceResponse<DesignDTO>(HttpStatusCode.NotFound, null, null);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new ServiceResponse<DesignDTO>(HttpStatusCode.InternalServerError, e.Message, null);
+                _logger.LogError(ex, ex.Message);
+                return new ServiceResponse<DesignDTO>(HttpStatusCode.InternalServerError, ex.Message, null);
             }
         }
 
@@ -56,10 +56,10 @@ namespace Application.EntitiesServices
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -79,10 +79,10 @@ namespace Application.EntitiesServices
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -95,15 +95,15 @@ namespace Application.EntitiesServices
                 {
                     var entity = DataMapping.MapDesign(dto);
                     entity.UpdatedDate = DateTime.UtcNow;
-                    return await base.Update(entity, ["CreatedDate"]);
+                    return await base.Update(entity);
                 }
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, e.Message);
-                return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
+                _logger.LogError(ex, ex.Message);
+                return new BaseServiceResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
