@@ -35,10 +35,21 @@ namespace Data.Repositories
             return _context.Set<T>().Where(expression).AsNoTracking();
         }
         
-        public virtual void Update(T entity)
+        public virtual void Update(T entity, params string[] propertiesToIgnore)
         {
-            _context.Set<T>().Update(entity);
+            var entry = _context.Entry(entity);
+            entry.State = EntityState.Modified;
+            if (!propertiesToIgnore.Any())
+                _context.Set<T>().Update(entity);
+            else
+            {
+                foreach (var property in propertiesToIgnore)
+                {
+                    entry.Property(property).IsModified = false;
+                }
+            }
         }
+
         public virtual async Task<bool> SaveChangesAsync()
         {
             return (await _context.SaveChangesAsync() >= 0);

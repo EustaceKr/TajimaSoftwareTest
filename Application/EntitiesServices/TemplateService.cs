@@ -1,4 +1,6 @@
-﻿using Application.EntitiesServices.Interfaces;
+﻿using Application.DTOs;
+using Application.EntitiesServices.Interfaces;
+using Application.Mapping;
 using Application.Responses;
 using Data.Context.Entities;
 using Data.Repositories.Interfaces;
@@ -27,7 +29,8 @@ namespace Application.EntitiesServices
                 var response = await GetById(id);
                 if (response.Response == HttpStatusCode.OK && response.Data is not null)
                 {
-                    return await base.Delete(response.Data);
+                    var template = DataMapping.MapTemplate(response.Data);
+                    return await base.Delete(template);
                 }
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
@@ -39,25 +42,28 @@ namespace Application.EntitiesServices
             }
         }
 
-        public async Task<ServiceResponse<Template>> GetById(int id)
+        public async Task<ServiceResponse<TemplateDTO>> GetById(int id)
         {
             try
             {
                 var response = await ((ITemplateRepository)_repository).FindById(id);
                 if (response is not null)
-                    return new ServiceResponse<Template>(HttpStatusCode.OK, null, response);
+                {
+                    var dto = DataMapping.MapTemplateDTO(response);
+                    return new ServiceResponse<TemplateDTO>(HttpStatusCode.OK, null, dto);
+                }
                 else
-                    return new ServiceResponse<Template>(HttpStatusCode.NotFound, null, null);
+                    return new ServiceResponse<TemplateDTO>(HttpStatusCode.NotFound, null, null);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return new ServiceResponse<Template>(HttpStatusCode.InternalServerError, e.Message, null);
+                return new ServiceResponse<TemplateDTO>(HttpStatusCode.InternalServerError, e.Message, null);
             }
             throw new NotImplementedException();
         }
 
-        public async Task<BaseServiceResponse> Create(Template template, List<int> designIds)
+        public async Task<BaseServiceResponse> Create(TemplateDTO dto, List<int> designIds)
         {
             if (designIds.Count > 0)
             {
@@ -65,16 +71,18 @@ namespace Application.EntitiesServices
                 {
                     var templateDesign = new TemplateDesign
                     {
-                        TemplateId = template.Id,
+                        TemplateId = dto.Id,
                         DesignId = designId
                     };
-                    template.TemplateDesigns.Add(templateDesign);
+                    dto.TemplateDesigns.Add(templateDesign);
                 }
             }
+            var template = DataMapping.MapTemplate(dto);
+            template.CreatedDate = DateTime.UtcNow;
             return await base.Create(template);
         }
 
-        public async Task<BaseServiceResponse> Update(int id, Template template, List<int> selectedDesignIds)
+        public async Task<BaseServiceResponse> Update(int id, TemplateDTO dto, List<int> selectedDesignIds)
         {
             try
             {
@@ -98,7 +106,7 @@ namespace Application.EntitiesServices
                     // Find designs to add
                     var designsToAdd = selectedDesignIds
                         .Where(sd => !existingDesignIds.Contains(sd))
-                        .Select(sd => new TemplateDesign { TemplateId = template.Id, DesignId = sd })
+                        .Select(sd => new TemplateDesign { TemplateId = dto.Id, DesignId = sd })
                         .ToList();
 
                     // Add new designs
@@ -108,10 +116,13 @@ namespace Application.EntitiesServices
                     }
 
                     // Update template properties
-                    existingTemplate.DecorationMethod = template.DecorationMethod;
-                    existingTemplate.Name = template.Name;
+                    existingTemplate.DecorationMethod = dto.DecorationMethod;
+                    existingTemplate.Name = dto.Name;
 
-                    var updateResponse = await base.Update(existingTemplate);
+                    var entity = DataMapping.MapTemplate(existingTemplate);
+                    entity.UpdatedDate = DateTime.UtcNow;
+
+                    var updateResponse = await base.Update(entity, ["CreatedDate"]);
                     if (updateResponse.Response == HttpStatusCode.OK)
                         return new BaseServiceResponse(HttpStatusCode.OK, null);
                     else 
@@ -129,26 +140,47 @@ namespace Application.EntitiesServices
             }
         }
 
-        public async Task<ServiceResponse<List<Design>>> GetRemainingDesigns(int id)
+        public async Task<ServiceResponse<List<DesignDTO>>> GetRemainingDesigns(int id)
         {
-            var remainingDesigns = new List<Design>();
+            var remainingDesigns = new List<DesignDTO>();
             var response = await _designService.GetAll();
 
             if (response.Response != HttpStatusCode.OK)
-                return new ServiceResponse<List<Design>>(HttpStatusCode.InternalServerError, "Error while fetching Data", null);
+                return new ServiceResponse<List<DesignDTO>>(HttpStatusCode.InternalServerError, "Error while fetching Data", null);
 
             var responseById = await GetById(id);
             if (responseById.Response == HttpStatusCode.OK || responseById.Data is not null)
             {
-                foreach (var design in response.Data!)
+                foreach (var dto in response.Data!)
                 {
-                    if (!responseById.Data!.TemplateDesigns.Any(x => x.DesignId == design.Id))
-                        remainingDesigns.Add(design);
+                    if (!responseById.Data!.TemplateDesigns.Any(x => x.DesignId == dto.Id))
+                        remainingDesigns.Add(dto);
                 }
-                return new ServiceResponse<List<Design>>(HttpStatusCode.OK, null, remainingDesigns);
+                return new ServiceResponse<List<DesignDTO>>(HttpStatusCode.OK, null, remainingDesigns);
             }
             else
-                return new ServiceResponse<List<Design>>(HttpStatusCode.InternalServerError, "Error while fetching Data", null);
+                return new ServiceResponse<List<DesignDTO>>(HttpStatusCode.InternalServerError, "Error while fetching Data", null);
+        }
+
+        public async new Task<ServiceResponse<List<TemplateDTO>>> GetAll()
+        {
+            var response = await base.GetAll();
+            if (response.Response == HttpStatusCode.OK)
+            {
+                if (response.Data is not null)
+                {
+                    var dtos = new List<TemplateDTO>();
+                    foreach (var template in response.Data)
+                    {
+                        dtos.Add(DataMapping.MapTemplateDTO(template));
+                    }
+                    return new ServiceResponse<List<TemplateDTO>>(HttpStatusCode.OK, null, dtos);
+                }
+                else
+                    return new ServiceResponse<List<TemplateDTO>>(HttpStatusCode.OK, null, null);
+            }
+            else
+                return new ServiceResponse<List<TemplateDTO>>(response.Response, response.Error, null);
         }
     }
 }

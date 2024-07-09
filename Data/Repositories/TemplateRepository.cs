@@ -18,7 +18,7 @@ namespace Data.Repositories
             return await FindByCondition(t => t.Id == id).Include(t => t.TemplateDesigns).ThenInclude(td => td.Design).FirstOrDefaultAsync();
         }
 
-        public override void Update(Template template)
+        public override void Update(Template template, params string[] propertiesToIgnore)
         {
             var oldTemplateDesigns = _context.TemplateDesigns.Where(x => x.TemplateId == template.Id);
             foreach ( var templateDesign in template.TemplateDesigns )
@@ -33,8 +33,7 @@ namespace Data.Repositories
                     _context.TemplateDesigns.Remove(oldTemplateDesign);
                 }
             }
-
-            base.Update(template);
+            base.Update(template, propertiesToIgnore);
         }
     }
 }

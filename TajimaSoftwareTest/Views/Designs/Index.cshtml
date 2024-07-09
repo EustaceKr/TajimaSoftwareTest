@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Data.Context.Entities.Design>
+﻿@model IEnumerable<Application.DTOs.DesignDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -46,9 +46,26 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" >Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="checkBeforeDelete(event, @item.Id)">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<div id="error-message" style="color: red;"></div>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function checkBeforeDelete(event, id) {
+            event.preventDefault(); // Prevent the default action
+            $.post('@Url.Action("IsUsedInTemplate", "Designs")', { id: id }, function (data) {
+                if (data === true) {
+                    $('#error-message').text('This design is used');
+                } else {
+                    window.location.href = '@Url.Action("Delete", "Designs")/' + id;
+                }
+            });
+        }
+    </script>
+}

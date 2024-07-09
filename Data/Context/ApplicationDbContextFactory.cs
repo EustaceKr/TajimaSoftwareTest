@@ -19,7 +19,6 @@ namespace Data.Context
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
 

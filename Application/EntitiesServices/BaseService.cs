@@ -96,11 +96,11 @@ namespace Application.EntitiesServices
             }
         }
 
-        public virtual async Task<BaseServiceResponse> Update(T entity)
+        public virtual async Task<BaseServiceResponse> Update(T entity, params string[] propertiesToIgnore)
         {
             try
             {
-                _repository.Update(entity);
+                _repository.Update(entity, propertiesToIgnore);
                 var saveResponse = await Complete();
                 if (saveResponse.Response == HttpStatusCode.OK)
                     return new BaseServiceResponse(HttpStatusCode.OK, null);

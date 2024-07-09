@@ -13,6 +13,8 @@ using System.Net;
 using TajimaSoftwareTest.Models;
 using Azure;
 using Web.Helpers;
+using Application.DTOs;
+using Application.Mapping;
 
 namespace Web.Controllers
 {
@@ -62,11 +64,11 @@ namespace Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DecorationMethod,Name,Width,Height")] Design design)
+        public async Task<IActionResult> Create([Bind("Id,DecorationMethod,Name,Width,Height")] DesignDTO dto)
         {
             if (ModelState.IsValid)
             {
-                var response = await _designService.Create(design);
+                var response = await _designService.Create(dto);
                 if(response.Response == HttpStatusCode.Created)
                 {
                     return RedirectToAction(nameof(Index));
@@ -98,23 +100,23 @@ namespace Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DecorationMethod,Name,Width,Height")] Design design)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DecorationMethod,Name,Width,Height")] DesignDTO dto)
         {
-            if (id != design.Id)
+            if (id != dto.Id)
             {
                 RedirectToAction(nameof(Error), new { message = "Invalid Id", status = HttpStatusCode.BadRequest });
             }
             
             if (ModelState.IsValid)
             {
-                var response = await _designService.Update(id, design);
+                var response = await _designService.Update(id, dto);
                 if (response.Response == HttpStatusCode.OK)
                     return RedirectToAction(nameof(Index));
                 else
                     return RedirectToAction(nameof(Error), new { message = response.Error, status = response.Response });
             }
-            ViewBag.DecorationMethodList = HelperMethods.GetDecorationMethodSelectList(design.DecorationMethod);
-            return View(design);
+            ViewBag.DecorationMethodList = HelperMethods.GetDecorationMethodSelectList(dto.DecorationMethod);
+            return View(dto);
         }
 
         // GET: Designs/Delete/5
@@ -156,7 +158,13 @@ namespace Web.Controllers
             return View(errorModel);
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> IsUsedInTemplate(int id)
+        {
+            bool isUsed = await _designService.IsUsedInTemplate(id);
+            return Json(isUsed);
+        }
+
     }
 }
 

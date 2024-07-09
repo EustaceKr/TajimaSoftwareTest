@@ -13,6 +13,7 @@ using System.Net;
 using Web.Helpers;
 using Newtonsoft.Json;
 using TajimaSoftwareTest.Models;
+using Application.DTOs;
 
 namespace Web.Controllers
 {
@@ -72,7 +73,7 @@ namespace Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DecorationMethod,Name")] Template template, string designs)
+        public async Task<IActionResult> Create([Bind("Id,DecorationMethod,Name")] TemplateDTO template, string designs)
         {
             if (ModelState.IsValid)
             {
@@ -126,7 +127,7 @@ namespace Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DecorationMethod,Name")] Template template, string designs)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DecorationMethod,Name")] TemplateDTO template, string designs)
         {
             if (id != template.Id)
             {

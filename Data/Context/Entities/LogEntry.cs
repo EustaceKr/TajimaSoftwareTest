@@ -13,6 +13,7 @@ namespace Data.Context.Entities
         public DateTime CreatedOn { get; set; }
         [MaxLength(10)]
         public string Level { get; set; }
+        [MaxLength(2000)]
         public string Message { get; set; }
         public string Exception { get; set; }
     }

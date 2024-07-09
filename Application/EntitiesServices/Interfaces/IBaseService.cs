@@ -11,7 +11,7 @@ namespace Application.EntitiesServices.Interfaces
     {
         Task<ServiceResponse<List<T>>> GetAll();
         Task<BaseServiceResponse> Create(T entity);
-        Task<BaseServiceResponse> Update(T entity);
+        Task<BaseServiceResponse> Update(T entity, params string[] propertiesToIgnore);
         Task<BaseServiceResponse> Delete(T entity);
         Task<BaseServiceResponse> Complete();
     }
