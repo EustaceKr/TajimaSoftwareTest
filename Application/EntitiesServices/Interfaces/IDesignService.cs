@@ -13,5 +13,6 @@ namespace Application.EntitiesServices.Interfaces
         Task<ServiceResponse<Design>> GetById(int id);
         Task<BaseServiceResponse> Update(int id, Design entity);
         Task<BaseServiceResponse> Delete(int id);
+        Task<bool> IsUsedInTemplate(int id);
     }
 }

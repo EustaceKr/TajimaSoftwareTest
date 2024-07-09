@@ -46,9 +46,10 @@ namespace Application.EntitiesServices
             {
                 var response = await GetById(id);
                 if (response.Response == HttpStatusCode.OK && response.Data is not null)
-                {
-                    return await base.Delete(response.Data);
-                }
+                    if (!response.Data.TemplateDesigns.Any())
+                        return await base.Delete(response.Data);
+                    else
+                        return new BaseServiceResponse(HttpStatusCode.BadRequest, "Design is used in a template.");
                 else
                     return new BaseServiceResponse(response.Response, response.Error);
             }
@@ -76,6 +77,20 @@ namespace Application.EntitiesServices
                 _logger.LogError(e, e.Message);
                 return new BaseServiceResponse(HttpStatusCode.InternalServerError, e.Message);
             }
+        }
+
+        public async Task<bool> IsUsedInTemplate(int id)
+        {
+            var response = await GetById(id);
+            if(response.Response == HttpStatusCode.OK && response.Data is not null)
+            {
+                if (response.Data.TemplateDesigns.Any())
+                    return true;
+                else
+                    return false;
+            }
+            else
+                throw new Exception(response.Error);
         }
     }
 }

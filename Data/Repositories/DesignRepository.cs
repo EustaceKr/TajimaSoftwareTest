@@ -11,7 +11,7 @@ namespace Data.Repositories
 
         public async Task<Design> FindById(int id)
         {
-            return await FindByCondition(x => x.Id == id).FirstOrDefaultAsync();
+            return await FindByCondition(x => x.Id == id).Include(d => d.TemplateDesigns).ThenInclude(td => td.Template).FirstOrDefaultAsync();
         }
     }
 }
