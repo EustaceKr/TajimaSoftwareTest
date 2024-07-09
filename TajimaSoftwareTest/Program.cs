@@ -12,13 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // NLog Config
-builder.Services.AddLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.SetMinimumLevel(LogLevel.Error);
-});
-builder.Services.AddSingleton<ILoggerProvider, NLogLoggerProvider>();
-// NLog Config
+builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(LogLevel.Error);
+builder.Logging.AddNLog(); // Add NLog
+
+// Read configuration from appsettings.json
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
